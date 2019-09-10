@@ -17,9 +17,7 @@
 	{% else %}
 		<a href="{% url 'peanut_accounts:peanut_store:payment_method' action='spk' pk=method.method.pk %}">Set Default</a>			
 	{% endif %}
-	{% if not method.method.is_default %}
 		<br /><a href="{% url 'peanut_accounts:peanut_store:payment_method' action='del' pk=method.method.pk %}">Delete</a>
-	{% endif %}
 	</td>
 </tr>
 <tr>

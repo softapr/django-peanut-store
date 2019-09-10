@@ -77,13 +77,13 @@ class Customer(CustomerBaseObject):
                                self.customer, api_data, m_type)
         
         super(Customer, self).add_payment_method(method)
-
+'''
     def set_default_payment_method(self, method):
-        '''
+        ''
         @todo: set default payment source in conekta
-        '''
+        ''
         super(Customer, self).set_default_payment_method(method)
-        
+        '''
 class PaymentMethod(PaymentMethodBaseObject):
     '''
     classdocs
@@ -111,14 +111,14 @@ class PaymentMethod(PaymentMethodBaseObject):
                 self.usable = False
                 raise Exception(e)
 
-    @property
-    def conekta_method(self):
+    def conekta_method(self, method_id=None):
         try:
             customer = conekta.Customer.find(self.method.customer.api_id)
             methods  = customer.payment_sources
             
             for method in methods:
-                if method.id == self.method.api_id:
+                if ((method_id is None and method.id==self.method.api_id) or
+                    (method_id is not None and method.id==method_id)):
                     return method
 
             self.usable = False
@@ -143,10 +143,17 @@ class PaymentMethod(PaymentMethodBaseObject):
             raise Exception(e)
 
     def delete_payment_method(self):
+        deleted, method_api_id = super(PaymentMethod, self).delete_payment_method()
+
         try:
-            if not self.method.is_default:
-                self.conekta_method.delete()
-                super(PaymentMethod, self).delete_payment_method()
+            if deleted:
+                self.conekta_method(method_api_id).delete()
             
         except Exception as e:
             raise Exception(e)
+    
+    def set_default(self):
+        '''
+        @todo: set default payment source in conekta
+        '''
+        super(PaymentMethod, self).set_default()

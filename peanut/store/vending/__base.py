@@ -34,10 +34,21 @@ class CustomerBaseObject:
 
         self.customer        = customer
         self.payment_methods = []
-        
+
         if not created:
-            methods = PaymentMethod.objects.filter(customer=self.customer)
-            
+            methods = PaymentMethod.objects.filter(customer=self.customer, is_default=False)
+            default_method = PaymentMethod.objects.filter(customer=self.customer, is_default=True)
+
+            if default_method.count() == 0 and methods.count() > 0:
+                self.set_default_payment_method(methods.last())
+
+            elif default_method.count() > 1:
+                self.set_default_payment_method(default_method[0])
+
+            for m in default_method:
+                self.add_payment_method(m.name, m.reference, m.exp_month,
+                                        m.exp_year, m.customer)
+
             for m in methods:
                 self.add_payment_method(m.name, m.reference, m.exp_month,
                                         m.exp_year, m.customer)
@@ -64,13 +75,13 @@ class CustomerBaseObject:
     def add_payment_method(self, method):
         
         self.payment_methods.append(method)
-        
+        '''
     @abc.abstractmethod
-    def set_default(self):
+    def set_default_payment_method(self, method):
         PaymentMethod.objects.filter(customer=self.customer,
                                      is_default=True).update(is_default=False)
-        self.method.is_default = True
-        self.method.save()
+        method.is_default = True
+        method.save()'''
         
 class PaymentMethodBaseObject:
     '''
@@ -107,12 +118,6 @@ class PaymentMethodBaseObject:
 
         self.created  = created
         self.method   = method
-        
-        if self.created:
-            methods_count = PaymentMethod.objects.filter(customer=customer).count()
-            
-            if methods_count == 1:
-                self.set_default()
 
     @abc.abstractmethod
     def update_payment_method(self, name):
@@ -121,8 +126,37 @@ class PaymentMethodBaseObject:
 
     @abc.abstractmethod
     def delete_payment_method(self):
-        if not self.method.is_default:
-            self.method.delete()
+        '''
+        @return: returns tuple of deleted bool & method_api_id of deleted method
+        '''
+        methods = PaymentMethod.objects.filter(customer=self.method.customer)
+        method_api_id = None
+        new_default_method = None
+        
+        if methods.count() > 1:
+            if self.method.is_default:
+                methods = [method 
+                           for method in methods 
+                           if method.api_id != self.method.api_id]
+                new_default_method = methods[0]
+
+            method_api_id = self.method.api_id
+            
+            if new_default_method != None:
+                self.method.delete()
+                self.method = new_default_method
+                self.set_default()
+                    
+            else:
+                self.method.delete()
+
+            self.usable = False
+            deleted = True
+            
+        else:
+            deleted = False
+
+        return deleted, method_api_id
 
     @abc.abstractmethod
     def add_billing_address(self):
