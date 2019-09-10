@@ -1,0 +1,12 @@
+{% extends '../base.html' %}
+{% block content %}
+<ul>
+	<li>Perfil</li>
+	<li>Mis pedidos</li>
+	<li>Seguridad</li>
+	<li>Direcciones</li>
+	{% if is_customer %}
+	<li><a href="{% url 'peanut_accounts:peanut_store:payment_methods' %}">Opciones de pago</a></li>
+	{% endif %}
+</ul>
+{% endblock%}

@@ -1,0 +1,24 @@
+{% extends '../base.html' %}
+{% block header %}
+<a href="{% url 'peanut_accounts:profile' %}">back</a>
+<h2>Card list</h2>
+{% endblock %}
+{% block content %}
+<table>
+	<tr>
+		<th>Type</th>
+		<th>Name / Reference</th>
+		<th>Address</th>
+		<th>Actions</th>
+	</tr>
+	{% for method in customer.payment_methods %}
+		{% include 'peanut/store/fragments/card_view.html' %}
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td><a href="{% url 'peanut_accounts:peanut_store:payment_method' action='add' %}">New</a></td>
+	</tr>
+</table>
+{% endblock%}

@@ -1,0 +1,3 @@
+=====
+Django Peanut Store
+=====
