@@ -108,3 +108,5 @@ venv.bak/
 .pydevproject
 
 Pipfile
+
+django_peanut_store/secrets/
