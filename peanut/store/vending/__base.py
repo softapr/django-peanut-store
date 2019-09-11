@@ -54,16 +54,22 @@ class CustomerBaseObject:
                                         m.exp_year, m.customer)
 
     @abc.abstractmethod
-    def update_customer(self, user, phone=None):
+    def update_customer(self, data):
         '''
         Update most of the data from user instance.
         '''
-        self.customer.name  = user.get_full_name()
-        self.customer.email = user.email
-        self.customer.user  = user
+        self.customer.user.first_name = data['first_name']
+        self.customer.user.last_name = data['last_name']
+        self.customer.user.email = data['email']
+        self.customer.user.save()
         
-        if phone is None:
-            self.customer.phone=phone
+        self.customer.name  = self.customer.user.get_full_name()
+        self.customer.email = self.customer.user.email
+        self.customer.phone=data['phone']
+        
+        if data['phone']=="" or data['phone']=='' or data['phone'] is None:
+            print("-----------------------------------------------")
+            self.customer.phone='+520000000000'
             
         self.customer.save()
 
@@ -73,15 +79,14 @@ class CustomerBaseObject:
     
     @abc.abstractmethod
     def add_payment_method(self, method):
-        
         self.payment_methods.append(method)
-        '''
+
     @abc.abstractmethod
     def set_default_payment_method(self, method):
         PaymentMethod.objects.filter(customer=self.customer,
                                      is_default=True).update(is_default=False)
         method.is_default = True
-        method.save()'''
+        method.save()
         
 class PaymentMethodBaseObject:
     '''
@@ -120,8 +125,10 @@ class PaymentMethodBaseObject:
         self.method   = method
 
     @abc.abstractmethod
-    def update_payment_method(self, name):
+    def update_payment_method(self, name, exp_month, exp_year):
         self.method.name = name
+        self.method.exp_month = exp_month
+        self.method.exp_year = exp_year
         self.method.save()
 
     @abc.abstractmethod

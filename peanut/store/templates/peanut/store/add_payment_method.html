@@ -1,10 +1,10 @@
 {% extends '../base.html' %}
 
 {% block header %}
-<h2>Add card</h2>
+<h2>{{action}} card</h2>
 {% endblock %}
 {% block content %}
-<form action="{% url 'peanut_accounts:peanut_store:payment_method' action='add' %}" method="post" id="card-form">
+<form action="{% url 'peanut_accounts:peanut_store:payment_method' action=action %}" method="post" id="card-form">
 	{% csrf_token %}
 	<span class="card-errors"></span>
 	<div>
@@ -14,31 +14,33 @@
 </form>
 {% endblock%}
 {% block extra-scripts %}
-<script type="text/javascript" src="https://cdn.conekta.io/js/latest/conekta.js"></script>
-<script type="text/javascript" >
-  Conekta.setPublicKey('key_Lhxxeqw4e4kc4iShJyG1z9A');
-
-  var conektaSuccessResponseHandler = function(token) {
-    var $form = $("#card-form");
-    //Inserta el token_id en la forma para que se envíe al servidor
-   	$form.find('input[name="token_id"]').val(token.id);
-    $form.get(0).submit(); //Hace submit
-  };
-  var conektaErrorResponseHandler = function(response) {
-    var $form = $("#card-form");
-    $form.find(".card-errors").text(response.message_to_purchaser);
-    $form.find("button").prop("disabled", false);
-  };
-
-  //jQuery para que genere el token después de dar click en submit
-  $(function () {
-    $("#card-form").submit(function(event) {
-      var $form = $(this);
-      // Previene hacer submit más de una vez
-      $form.find("button").prop("disabled", true);
-      Conekta.Token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
-      return false;
-    });
-  });
-</script>
+	{% if action == 'add'%}
+	<script type="text/javascript" src="https://cdn.conekta.io/js/latest/conekta.js"></script>
+	<script type="text/javascript" >
+	  Conekta.setPublicKey('key_Lhxxeqw4e4kc4iShJyG1z9A');
+	
+	  var conektaSuccessResponseHandler = function(token) {
+	    var $form = $("#card-form");
+	    //Inserta el token_id en la forma para que se envíe al servidor
+	   	$form.find('input[name="token_id"]').val(token.id);
+	    $form.get(0).submit(); //Hace submit
+	  };
+	  var conektaErrorResponseHandler = function(response) {
+	    var $form = $("#card-form");
+	    $form.find(".card-errors").text(response.message_to_purchaser);
+	    $form.find("button").prop("disabled", false);
+	  };
+	
+	  //jQuery para que genere el token después de dar click en submit
+	  $(function () {
+	    $("#card-form").submit(function(event) {
+	      var $form = $(this);
+	      // Previene hacer submit más de una vez
+	      $form.find("button").prop("disabled", true);
+	      Conekta.Token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
+	      return false;
+	    });
+	  });
+	</script>
+	{% endif %}
 {% endblock %}

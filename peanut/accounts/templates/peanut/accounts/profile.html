@@ -6,6 +6,7 @@
 	<li>Seguridad</li>
 	<li>Direcciones</li>
 	{% if is_customer %}
+	<li><a href="{% url 'peanut_accounts:peanut_store:profile' action='upd' %}">Informacion personal</a></li>
 	<li><a href="{% url 'peanut_accounts:peanut_store:payment_methods' %}">Opciones de pago</a></li>
 	{% endif %}
 </ul>

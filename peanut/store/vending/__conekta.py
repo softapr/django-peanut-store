@@ -47,17 +47,17 @@ class Customer(CustomerBaseObject):
 
         return None
 
-    def update_customer(self, user, phone):
+    def update_customer(self, data):
         '''
         Update most of the data from user instance.
         '''
-        super(Customer, self).update_customer(user, phone=None)
-        data = {"name": user.get_full_name(),
-                "email": user.email,
-                "phone": phone}
+        super(Customer, self).update_customer(data)
+        conketa_data = {"name": self.customer.name,
+                        "email": self.customer.email,
+                        "phone": self.customer.phone}
 
         try:
-            self.conekta_customer.update(data)
+            self.conekta_customer.update(conketa_data)
 
         except Exception as e:
             raise Exception(e)
@@ -77,13 +77,13 @@ class Customer(CustomerBaseObject):
                                self.customer, api_data, m_type)
         
         super(Customer, self).add_payment_method(method)
-'''
+
     def set_default_payment_method(self, method):
-        ''
-        @todo: set default payment source in conekta
-        ''
-        super(Customer, self).set_default_payment_method(method)
         '''
+        @todo: set default payment source in conekta
+        '''
+        super(Customer, self).set_default_payment_method(method)
+
 class PaymentMethod(PaymentMethodBaseObject):
     '''
     classdocs
@@ -136,8 +136,8 @@ class PaymentMethod(PaymentMethodBaseObject):
 
         try:
             self.conekta_method().update({"name": self.method.name,
-                                        "exp_month": self.method.exp_month,
-                                        "exp_year": self.method.exp_year})
+                                          "exp_month": self.method.exp_month,
+                                          "exp_year": self.method.exp_year})
 
         except Exception as e:
             raise Exception(e)
