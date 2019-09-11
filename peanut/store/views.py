@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+from peanut.inventory.forms import AddressForm
+from peanut.inventory.models import Address
 from peanut.store.forms import PaymentMethodForm
 
 @login_required
@@ -9,24 +11,51 @@ def BillingAddresView(request, action, pk):
     
     if action == 'add':
         if request.method == 'POST':
-            redirect('peanut_accounts:peanut_store:payment_methods_address')
+            form = AddressForm(request.POST)
+
+            if form.is_valid():
+                address = form.save(commit=True)
+
+                for method in customer.payment_methods:
+                    if method.method.pk == pk:
+                        method.add_billing_address(address)
+
+                address.save()
+                return redirect('peanut_accounts:peanut_store:payment_methods')
+
+            return render(request, 'peanut/simple_form.html', {"form": form})
+
         else:
-            return render(request, 'peanut/store/manage_payments.html', {"customer": customer})
-            
-    elif action == 'del':
-        for method in customer.payment_methods:
-            if method.method.pk == pk:
-                
-                return redirect('peanut_accounts:peanut_store:payment_methods_address')
-            
+            form = AddressForm()
+            return render(request, 'peanut/simple_form.html', {"form": form})
+
     elif action == 'upd':
+        address_instance = None
         for method in customer.payment_methods:
             if method.method.pk == pk:
+                address_instance = method.method.address
                 
-                return redirect('peanut_accounts:peanut_store:payment_methods_address')
+        if request.method == 'POST':
+            form = AddressForm(request.POST, instance=address_instance)
+
+            if form.is_valid():
+                address = form.save(commit=True)
+
+                for method in customer.payment_methods:
+                    if method.method.pk == pk:
+                        method.update_billing_address(address)
+
+                address.save()
+                return redirect('peanut_accounts:peanut_store:payment_methods')
+
+            return render(request, 'peanut/simple_form.html', {"form": form})
+
+        else:
+            form = AddressForm(instance=address_instance)
+            return render(request, 'peanut/simple_form.html', {"form": form})
 
     else:
-        return render(request, 'peanut/store/manage_payments.html', {"address": address})
+        return render(request, 'peanut/store/manage_payments.html')
 
 @login_required
 def PaymentMethodsView(request, action=None, pk=None):

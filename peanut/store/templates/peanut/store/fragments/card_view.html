@@ -9,7 +9,15 @@
 		{{ method.method.reference|slice:"-4:" }}
 	</td>
 	<td>
-		{{ method.}}
+	{% if method.method.address  %}
+		{{ method.method.address.street1 }}<br />
+		{{ method.method.address.street2 }}<br />
+		{{ method.method.address.city }}, {{ method.method.address.state }}, {{ method.method.address.country }}<br />
+		{% if not method.method.address.residential %}corporate<br />{% endif %}
+		<a href="{% url 'peanut_accounts:peanut_store:payment_methods_address' action='upd' pk=method.method.pk %}">Update</a>
+	{% else %}
+		<a href="{% url 'peanut_accounts:peanut_store:payment_methods_address' action='add' pk=method.method.pk %}">Add Billing Address</a>
+	{% endif %}
 	</td>
 	<td>
 	{% if method.method.is_default %}

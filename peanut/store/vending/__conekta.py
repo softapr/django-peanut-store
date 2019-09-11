@@ -135,7 +135,7 @@ class PaymentMethod(PaymentMethodBaseObject):
                                                          exp_year)
 
         try:
-            self.conekta_method.update({"name": self.method.name,
+            self.conekta_method().update({"name": self.method.name,
                                         "exp_month": self.method.exp_month,
                                         "exp_year": self.method.exp_year})
 
@@ -157,3 +157,36 @@ class PaymentMethod(PaymentMethodBaseObject):
         @todo: set default payment source in conekta
         '''
         super(PaymentMethod, self).set_default()
+
+    def add_billing_address(self, address):
+        try:
+            self.conekta_method().update({
+                "address": {
+                    "street1": address.street1,
+                    "street2": address.street2,
+                    "city": address.city,
+                    "state": address.state,
+                    "country": address.country,
+                    "postal_code": address.postalcode}
+                })
+            super(PaymentMethod, self).add_billing_address(address)
+            
+        except Exception as e:
+            raise Exception(e)
+        
+    def update_billing_address(self, address):
+        
+        try:
+            self.conekta_method().update({
+                "address": {
+                    "street1": address.street1,
+                    "street2": address.street2,
+                    "city": address.city,
+                    "state": address.state,
+                    "country": address.country,
+                    "postal_code": address.postalcode}
+                })
+            super(PaymentMethod, self).update_billing_address()
+            
+        except Exception as e:
+            raise Exception(e)

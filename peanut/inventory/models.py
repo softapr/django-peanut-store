@@ -5,6 +5,6 @@ class Address(models.Model):
     street2     = models.CharField(max_length=100)
     city        = models.CharField(max_length=50)
     state       = models.CharField(max_length=50)
-    country     = models.CharField(max_length=2)
+    country     = models.CharField(max_length=2, default='MX')
     postalcode  = models.CharField(max_length=5)
     residential = models.BooleanField(default=True)
