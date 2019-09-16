@@ -1,8 +1,4 @@
-{% extends '../base.html' %}
-{% block header %}
-<a href="{% url 'peanut_accounts:profile' %}">back</a>
-<h2>Card list</h2>
-{% endblock %}
+{% extends '../index.html' %}
 {% block content %}
 <table>
 	<tr>
@@ -18,7 +14,7 @@
 		<td></td>
 		<td></td>
 		<td></td>
-		<td><a href="{% url 'peanut_accounts:peanut_store:payment_method' action='add' %}">New</a></td>
+		<td><a href="{% url 'peanut_accounts:peanut.store:AddPaymentMethod' %}">New</a></td>
 	</tr>
 </table>
 {% endblock%}

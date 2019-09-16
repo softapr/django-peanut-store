@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 
-from peanut.store.models import Address, Customer
+from peanut.store.models import Address, Customer, ShippingContact
 
 class PaymentMethodForm(forms.Form):
     token_id = forms.CharField(widget=forms.HiddenInput(),
@@ -38,6 +38,7 @@ class PaymentMethodForm(forms.Form):
                                    'size': 4,
                                    'maxlength': 4,
                                    'data-conekta': 'card[exp_year]'}))
+
 class PaymentMethodUpdateForm(forms.Form):
     name = forms.CharField(label=_('Nombre del tarjetahabiente'),
                            max_length=25,
@@ -57,6 +58,18 @@ class PaymentMethodUpdateForm(forms.Form):
                                    'size': 4,
                                    'maxlength': 4,
                                    'data-conekta': 'card[exp_year]'}))
+
+class ShippingContactForm(forms.Form):
+    name            = forms.CharField(max_length=50)
+    phone           = forms.CharField(max_length=50)
+    between_streets = forms.CharField(max_length=100)
+    street1         = forms.CharField(max_length=100)
+    street2         = forms.CharField(max_length=100)
+    city            = forms.CharField(max_length=50)
+    state           = forms.CharField(max_length=50)
+    country         = forms.CharField(max_length=2)
+    postalcode      = forms.CharField(max_length=5)
+    residential     = forms.BooleanField()
 
 class AddressForm(ModelForm):
     

@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from peanut.accounts import views
-from peanut.store.views import PaymentMethodsView
+from django.urls import reverse_lazy
 
 app_name    = 'peanut_accounts'
 urlpatterns = [
@@ -11,7 +11,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('signup/', views.SignupView, name='signup'),
 
-    path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
+    path('password_change/', views.ChangePasswordView, name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
 
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),

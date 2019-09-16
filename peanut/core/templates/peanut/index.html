@@ -1,4 +1,6 @@
-{% extends '../base.html' %}
-{% block header %}{% endblock %}
+{% extends '../peanut/base.html' %}
+{% block header %}
+	<h1><button class="icon-back" onClick="javascript:history.go(-1);"></button> {{ header_title }}</h1>
+{% endblock %}
 {% block content %}{% endblock %}
 {% block extra-scripts %}{% endblock %}

@@ -6,7 +6,8 @@ Created on 7 sep. 2019
 import abc
 from abc import ABCMeta
 
-from peanut.store.models import Customer, PaymentMethod
+from peanut.store.models import Customer, PaymentMethod, ShippingContact, Address
+from django.contrib.gis.geoip2.resources import City
 
 class CustomerBaseObject:
     '''
@@ -32,8 +33,9 @@ class CustomerBaseObject:
                 phone=phone,
                 user=user)
 
-        self.customer        = customer
-        self.payment_methods = []
+        self.customer         = customer
+        self.payment_methods  = []
+        self.shipping_address = []
 
         if not created:
             methods = PaymentMethod.objects.filter(customer=self.customer, is_default=False)
@@ -68,7 +70,6 @@ class CustomerBaseObject:
         self.customer.phone=data['phone']
         
         if data['phone']=="" or data['phone']=='' or data['phone'] is None:
-            print("-----------------------------------------------")
             self.customer.phone='+520000000000'
             
         self.customer.save()
@@ -88,6 +89,85 @@ class CustomerBaseObject:
         method.is_default = True
         method.save()
         
+    @abc.abstractmethod
+    def add_shipping_address(self, address):
+        self.shipping_address.append(address)
+
+    @abc.abstractmethod
+    def set_default_shipping_address(self, address):
+        ShippingContact.objects.filter(customer=self.customer,
+                                       is_default=True).update(is_default=False)
+        address.is_default = True
+        address.save()
+        
+class ShippingContactBaseObject:
+    '''
+    classdocs
+    '''
+    __metaclass__ = ABCMeta
+    usable        = True
+    
+    def __init__(self, phone, name, between_streets, address_data, customer):
+        '''
+        Constructor
+        '''
+        try:
+            contact = ShippingContact.objects.get(phone=phone,
+                                                  name=name,
+                                                  between_streets=between_streets,
+                                                  customer=customer)
+            self.created = False
+
+        except:
+            address = Address.objects.create(street1=address_data['street1'],
+                                             street2=address_data['street2'],
+                                             city=address_data['city'],
+                                             state=address_data['state'],
+                                             country=address_data['country'],
+                                             postalcode=address_data['postalcode'],
+                                             residential=address_data['residential'])
+
+            contact = ShippingContact.objects.create(phone=phone,
+                                                     name=name,
+                                                     between_streets=between_streets,
+                                                     address=address,
+                                                     customer=customer)
+
+            self.created = True
+
+        self.contact = contact
+    
+    @abc.abstractmethod
+    def update_shipping_contact(self, phone, name, between_streets, address_data):
+        self.contact.address.street1 = address_data['street1']
+        self.contact.address.street2 = address_data['street2']
+        self.contact.address.city = address_data['city']
+        self.contact.address.state = address_data['state']
+        self.contact.address.country = address_data['country']
+        self.contact.address.postalcode = address_data['postalcode']
+        self.contact.address.residential = address_data['residential']
+        self.contact.address.save()
+        
+        self.contact.phone = phone
+        self.contact.name = name
+        self.contact.between_streets = between_streets
+        self.contact.save()
+
+    @abc.abstractmethod
+    def delete_shipping_contact(self):
+        deleted = True
+        contact_api_id = self.contact.api_id
+        self.contact.delete()
+        
+        return deleted, contact_api_id
+
+    @abc.abstractmethod
+    def set_default(self):
+        ShippingContact.objects.filter(customer=self.contact.customer,
+                                     is_default=True).update(is_default=False)
+        self.contact.is_default = True
+        self.contact.save()
+
 class PaymentMethodBaseObject:
     '''
     classdocs

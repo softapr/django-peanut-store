@@ -1,13 +1,14 @@
-{% extends '../base.html' %}
+{% extends '../index.html' %}
 {% block content %}
 <ul>
 	<li>Perfil</li>
 	<li>Mis pedidos</li>
-	<li>Seguridad</li>
-	<li>Direcciones</li>
+	<li><a href="{% url 'peanut_accounts:password_change' %}">Seguridad</a></li>
 	{% if is_customer %}
-	<li><a href="{% url 'peanut_accounts:peanut_store:profile' action='upd' %}">Informacion personal</a></li>
-	<li><a href="{% url 'peanut_accounts:peanut_store:payment_methods' %}">Opciones de pago</a></li>
+	<li><a href="{% url 'peanut_accounts:peanut.store:ShippingContacts' %}">Direcciones</a></li>
+	<li><a href="{% url 'peanut_accounts:peanut.store:UpdateProfile' %}">Informacion personal</a></li>
+	<li><a href="{% url 'peanut_accounts:peanut.store:PaymentMethods' %}">Opciones de pago</a></li>
 	{% endif %}
 </ul>
-{% endblock%}
+{% endblock %}
+{% block extra-scripts %}{% endblock %}

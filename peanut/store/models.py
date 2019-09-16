@@ -43,6 +43,16 @@ class PaymentMethod(models.Model):
 
 ###############################################################################
 
+class ShippingContact(models.Model):
+    api_id          = models.CharField(max_length=21, unique=True, blank=True,
+                                       null=True, editable=False)
+    phone           = models.CharField(max_length=50, null=True)
+    name            = models.CharField(max_length=50)
+    between_streets = models.CharField(max_length=100)
+    address         = models.ForeignKey('Address', on_delete=models.PROTECT, null=True)
+    customer        = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    is_default = models.BooleanField(default=False)
+
 class Address(models.Model):
     street1     = models.CharField(max_length=100)
     street2     = models.CharField(max_length=100)

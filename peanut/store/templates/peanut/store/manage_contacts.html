@@ -1,0 +1,20 @@
+{% extends '../index.html' %}
+{% block content %}
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Address</th>
+		<th>Actions</th>
+	</tr>
+	{% for contact in customer.shipping_contacts %}
+	<tr>
+		<td>{{ contact.name }}</td>
+	</tr>
+	{% endfor %}
+	<tr>
+		<td></td>
+		<td></td>
+		<td><a href="{% url 'peanut_accounts:peanut.store:AddShippingContact' %}">New</a></td>
+	</tr>
+</table>
+{% endblock%}

@@ -1,10 +1,6 @@
-{% extends '../base.html' %}
-
-{% block header %}
-<h2>{{action}} card</h2>
-{% endblock %}
+{% extends '../index.html' %}
 {% block content %}
-<form action="{% url 'peanut_accounts:peanut_store:payment_method' action=action %}" method="post" id="card-form">
+<form action="{% url 'peanut_accounts:peanut.store:AddPaymentMethod' %}" method="post" id="card-form">
 	{% csrf_token %}
 	<span class="card-errors"></span>
 	<div>
@@ -14,7 +10,6 @@
 </form>
 {% endblock%}
 {% block extra-scripts %}
-	{% if action == 'add'%}
 	<script type="text/javascript" src="https://cdn.conekta.io/js/latest/conekta.js"></script>
 	<script type="text/javascript" >
 	  Conekta.setPublicKey('key_Lhxxeqw4e4kc4iShJyG1z9A');
@@ -42,5 +37,4 @@
 	    });
 	  });
 	</script>
-	{% endif %}
 {% endblock %}

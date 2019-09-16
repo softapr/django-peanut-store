@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 from peanut.accounts import forms
 
@@ -9,8 +12,31 @@ def ProfileView(request):
     customer = request.user.get_vending_customer()
 
     return render(request, 'peanut/accounts/profile.html',{
-        "is_customer": False if customer is None else True})
-    
+        "is_customer": False if customer is None else True,
+        "header_title": "Profile"})
+
+
+@login_required
+def ChangePasswordView(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('peanut_accounts:profile')
+
+        else:
+            messages.error(request, 'Please correct the error below.')
+
+    else:
+        form = PasswordChangeForm(request.user)
+
+    return render(request, 'peanut/accounts/change_password.html', {
+        'form': form
+    })
+
 def SignupView(request):
     if request.method == 'POST':
         form = forms.SignUpForm(request.POST)
@@ -31,4 +57,5 @@ def SignupView(request):
     else:
         form = forms.SignUpForm()
 
-    return render(request, 'peanut/accounts/signup.html', {'form': form})
+    return render(request, 'peanut/accounts/signup.html', {'form': form,
+                                                           "header_title": "Signup"})
