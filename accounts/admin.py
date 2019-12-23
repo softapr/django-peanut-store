@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, GroupAdmin as _GroupAdmin
-from peanut.accounts.models import User, Group
+from dapricot.store.accounts.models import User, Group
 from django.utils.translation import gettext, gettext_lazy as _
 
-from peanut.core.admin import site
+from dapricot.store.core.admin import site
 
 @admin.register(Group, site=site)
 class GroupAdmin(_GroupAdmin):

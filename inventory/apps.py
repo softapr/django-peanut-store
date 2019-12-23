@@ -1,13 +1,13 @@
 from django.apps import AppConfig
 
-class SimpleAccountsConfig(AppConfig):
+class SimpleInventoryConfig(AppConfig):
     """Simple AppConfig which does not do automatic discovery."""
 
-    name = 'peanut.accounts'
-    label = 'peanut_accounts'
-    verbose_name = "Peanut Store Auth"
+    name = 'dapricot.store.inventory'
+    label = 'dapricot_store_inventory'
+    verbose_name = "Django Apricot Store Inventory"
 
-class AccountsConfig(SimpleAccountsConfig):
+class InventoryConfig(SimpleInventoryConfig):
     """The default AppConfig for admin which does autodiscovery."""
 
     def ready(self):

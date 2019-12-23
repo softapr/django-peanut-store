@@ -5,7 +5,7 @@ from django.contrib.auth.models import PermissionsMixin as _PermissionsMixin, Gr
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy, ugettext as _
 
-from peanut.accounts.managers import UserManager
+from dapricot.store.accounts.managers import UserManager
 
 class Group(Group):
     pass
@@ -60,10 +60,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def get_vending_customer(self):
         '''
-        Returns CustomerObject if peanut.store is on INSTALLED_APPS.
+        Returns CustomerObject if dapricot.store.store is on INSTALLED_APPS.
         '''
-        if 'peanut.store' in settings.INSTALLED_APPS:
-            from peanut.store import vending
+        if 'dapricot.store.store' in settings.INSTALLED_APPS:
+            from dapricot.store.store import vending
             return vending.CustomerObject(self)
 
         else:
